@@ -17,7 +17,7 @@ class XP_TI_Admin {
         wp_enqueue_script('jquery-ui-sortable'); wp_enqueue_script('jquery-ui-autocomplete');
         wp_enqueue_script('xp-ti-admin', XP_TI_URL.'assets/js/admin.js',['jquery','jquery-ui-sortable','jquery-ui-autocomplete'],XP_TI_VERSION,true);
         wp_enqueue_style('xp-ti-admin', XP_TI_URL.'assets/css/admin.css',[],XP_TI_VERSION);
-        wp_localize_script('xp-ti-admin','XP_TI_ADMIN',[ 'ajaxurl'=>admin_url('admin-ajax.php'),'nonce'=>wp_create_nonce('xp_ti_admin'),'currency'=>get_woocommerce_currency() ]);
+        wp_localize_script('xp-ti-admin','XP_TI_ADMIN',[ 'ajaxurl'=>admin_url('admin-ajax.php'),'nonce'=>wp_create_nonce('xp_ti_admin'),'currency'=>class_exists('WooCommerce') ? get_woocommerce_currency() : get_option('woocommerce_currency', 'USD') ]);
     }
     public static function details($post) {
         $days=(int)get_post_meta($post->ID,'_xp_ti_days',true); $destination=get_post_meta($post->ID,'_xp_ti_destination',true);
