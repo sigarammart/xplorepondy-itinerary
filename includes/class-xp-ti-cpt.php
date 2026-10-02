@@ -4,23 +4,10 @@ if (!defined('ABSPATH')) exit;
 class XP_TI_CPT {
     public static function init() {
         add_action('init', [__CLASS__, 'register_post_type']);
+        add_action('admin_init', [__CLASS__, 'grant_admin_capabilities']);
     }
 
     public static function register_post_type() {
-        $capabilities = [
-            'edit_post'              => 'edit_xp_itinerary',
-            'read_post'              => 'read_xp_itinerary',
-            'delete_post'            => 'delete_xp_itinerary',
-            'edit_posts'             => 'edit_xp_itineraries',
-            'edit_others_posts'      => 'edit_others_xp_itineraries',
-            'publish_posts'          => 'publish_xp_itineraries',
-            'read_private_posts'     => 'read_private_xp_itineraries',
-            'delete_posts'           => 'delete_xp_itineraries',
-            'delete_private_posts'   => 'delete_private_xp_itineraries',
-            'delete_published_posts' => 'delete_published_xp_itineraries',
-            'delete_others_posts'    => 'delete_others_xp_itineraries',
-        ];
-
         register_post_type('xp_itinerary', [
             'labels' => [
                 'name'               => 'Travel Itineraries',
@@ -45,32 +32,27 @@ class XP_TI_CPT {
             'supports'            => ['title', 'editor', 'thumbnail', 'excerpt'],
             'has_archive'         => true,
             'rewrite'             => ['slug' => 'travel-itineraries'],
-            'capability_type'     => ['xp_itinerary', 'xp_itineraries'],
+            'capability_type'     => 'post',
             'map_meta_cap'        => true,
-            'capabilities'        => $capabilities,
+            'capabilities'        => [
+                'edit_post'             => 'manage_options',
+                'read_post'             => 'manage_options',
+                'delete_post'           => 'manage_options',
+                'edit_posts'            => 'manage_options',
+                'edit_others_posts'     => 'manage_options',
+                'publish_posts'         => 'manage_options',
+                'read_private_posts'    => 'manage_options',
+                'delete_posts'          => 'manage_options',
+                'delete_private_posts'  => 'manage_options',
+                'delete_published_posts'=> 'manage_options',
+                'delete_others_posts'   => 'manage_options',
+                'create_posts'          => 'manage_options',
+            ],
         ]);
     }
 
     public static function grant_admin_capabilities() {
-        $role = get_role('administrator');
-        if (!$role) {
-            return;
-        }
-
-        foreach ([
-            'edit_xp_itinerary',
-            'read_xp_itinerary',
-            'delete_xp_itinerary',
-            'edit_xp_itineraries',
-            'edit_others_xp_itineraries',
-            'publish_xp_itineraries',
-            'read_private_xp_itineraries',
-            'delete_xp_itineraries',
-            'delete_private_xp_itineraries',
-            'delete_published_xp_itineraries',
-            'delete_others_xp_itineraries',
-        ] as $cap) {
-            $role->add_cap($cap);
-        }
+        // The CPT intentionally uses manage_options, so only administrators
+        // (and any role explicitly granted manage_options) can manage it.
     }
 }
